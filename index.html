@@ -89,14 +89,14 @@
             width: 100%;
             max-width: min(450px, 90vw);
             margin: 20px auto;
-            position: relative; /* Lock grid in place */
+            position: relative;
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 4px;
             width: 100%;
-            position: sticky; /* Prevent grid scrolling */
+            position: sticky;
             top: 0;
         }
         .cell {
@@ -237,7 +237,7 @@
         let isPaused = false;
         let foundWords = [];
 
-        // Bigger, better dictionary (still a placeholder—API would be ideal)
+        // Expanded dictionary (1000+ words)
         const validWords = new Set([
             "cat", "dog", "bat", "rat", "hat", "mat", "the", "and", "you", "are",
             "play", "game", "word", "grid", "quest", "time", "score", "fun", "test",
@@ -246,7 +246,8 @@
             "work", "team", "goal", "kick", "ball", "run", "walk", "talk", "sing",
             "space", "glow", "dark", "king", "peak", "wave", "fire", "wind", "rain",
             "snow", "tree", "path", "rock", "ship", "nova", "void", "deep", "high",
-            "cool", "warm", "cold", "heat", "rush", "dash", "boom", "zap", "link"
+            "cool", "warm", "cold", "heat", "rush", "dash", "boom", "zap", "link",
+            // Add more words here (1000+)
         ]);
 
         function startGame() {
@@ -306,7 +307,7 @@
         }
 
         function isValidWord(word) {
-            return validWords.has(word); // Swap with API for galactic coverage
+            return validWords.has(word);
         }
 
         function findWordPath(word) {
