@@ -12,131 +12,105 @@
             padding: 0;
             box-sizing: border-box;
         }
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-            overscroll-behavior: none;
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
-            color: #e0e0e0;
-        }
         body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             touch-action: manipulation;
         }
-        .intro-page, .game-page {
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-        }
         .intro-page {
-            flex: 1;
-            text-align: center;
-        }
-        .game-page {
-            display: none;
-            flex: 1;
-            text-align: center;
-            margin: 0 20px 20px;
-            border-radius: 10px;
-        }
-        .intro-header {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            flex: 1;
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
         }
-        .intro-header img {
+        .intro-page img {
             width: 150px;
-            filter: drop-shadow(0 0 10px #00ffff);
+            margin-bottom: 20px;
         }
-        h1 {
-            font-size: clamp(2rem, 8vw, 3rem);
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
+        .intro-page h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
-        p {
-            font-size: clamp(1rem, 4vw, 1.2rem);
-            max-width: 700px;
-            line-height: 1.6;
-            margin: 20px auto;
+        .intro-page p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            max-width: 600px;
+            line-height: 1.5;
         }
-        ul {
+        .intro-page ul {
             text-align: left;
             display: inline-block;
-            margin: 20px auto;
+            margin: 0 auto 20px;
             padding-left: 20px;
-            color: #00ffcc;
         }
         .start-button {
-            padding: 15px 40px;
-            font-size: clamp(1rem, 5vw, 1.3rem);
-            color: #fff;
-            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: #4CAF50;
+            background-color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             cursor: pointer;
-            animation: glow 1.5s infinite alternate;
-            box-shadow: 0 0 15px #00ffff;
+            animation: pulse 1.5s infinite;
         }
-        @keyframes glow {
-            0% { box-shadow: 0 0 15px #00ffff; }
-            100% { box-shadow: 0 0 25px #ff00ff; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
-        .grid-container {
-            width: 100%;
-            max-width: min(450px, 90vw);
-            margin: 20px auto;
-            position: relative;
+        .game-page {
+            display: none;
+            padding: 20px;
+            flex: 1;
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            width: 100%;
-            position: sticky;
-            top: 0;
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 400px;
         }
         .cell {
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #00ffff;
-            font-size: clamp(1rem, 4vw, 1.3rem);
-            background: #1b263b;
-            color: #fff;
+            border: 1px solid #000;
+            font-size: 1.2rem;
+            background-color: white;
             aspect-ratio: 1;
-            transition: all 0.3s ease;
             user-select: none;
             -webkit-user-select: none;
         }
-        .cell:hover {
-            background: #00ffff;
-            color: #000;
-        }
         .highlight {
-            background: #ff00ff;
-            border: 2px solid #fff;
-            box-shadow: 0 0 10px #ff00ff;
+            background-color: lightgreen;
+            border: 2px solid darkgreen;
         }
         #wordInput {
-            padding: 12px;
-            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 20px;
             width: 80%;
-            max-width: 350px;
-            border: 2px solid #00ffff;
-            border-radius: 25px;
-            background: #0d1b2a;
-            color: #fff;
+            max-width: 300px;
+            box-sizing: border-box;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
             outline: none;
         }
         #submitButton, #newGridButton, #playPauseButton, #resetButton {
             padding: 12px 24px;
-            font-size: clamp(0.9rem, 4vw, 1rem);
+            font-size: 1rem;
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             cursor: pointer;
             margin: 5px;
             transition: transform 0.2s;
@@ -144,75 +118,94 @@
         #submitButton:hover, #newGridButton:hover, #playPauseButton:hover, #resetButton:hover {
             transform: scale(1.1);
         }
-        #submitButton { background: #00ffcc; color: #000; }
-        #newGridButton { background: #ff9800; color: #fff; }
-        #playPauseButton { background: #2196f3; color: #fff; }
-        #resetButton { background: #f44336; color: #fff; }
+        #submitButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #newGridButton {
+            background-color: #FF9800;
+            color: white;
+        }
+        #playPauseButton {
+            background-color: #2196F3;
+            color: white;
+        }
+        #resetButton {
+            background-color: #F44336;
+            color: white;
+        }
         #timer, #score {
-            font-size: clamp(1.5rem, 6vw, 1.8rem);
-            margin: 20px 0;
-            color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        .donation-message {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #333;
+        }
+        .donation-message img {
+            width: 100px;
+            margin-top: 10px;
         }
         footer {
-            background: #0d1b2a;
-            color: #e0e0e0;
-            padding: 15px;
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            font-size: 0.9rem;
         }
         footer a {
-            color: #00ffcc;
+            color: #4CAF50;
             text-decoration: none;
         }
         footer a:hover {
             text-decoration: underline;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Intro Page -->
     <div class="intro-page" id="introPage">
-        <div class="intro-header">
-            <img src="donate.jpg" alt="Word Grid Quest Logo">
-            <h1>Word Grid Quest</h1>
-        </div>
+        <img src="word.jpg" alt="Word Grid Quest Logo">
+        <h1>Word Grid Quest</h1>
         <p>
-            Welcome to <strong>Word Grid Quest</strong>! Dive into a galactic grid of letters, connecting them horizontally, vertically, or diagonally to form real words. Longer words = bigger points! Beat the clock before your score fades into the void.
+            Welcome to <strong>Word Grid Quest</strong>! Your mission is to find as many words as possible in a grid of random letters. Words can be formed by connecting adjacent letters <strong>horizontally, vertically, or diagonally</strong>. The longer the word, the higher your score! But be careful—time is ticking, and your score will <strong>decrease over time</strong> if you don’t keep finding words quickly.
         </p>
         <p>
             <strong>How to Play:</strong>
             <ul>
-                <li>Spot a word, type it, hit <strong>Submit</strong>.</li>
-                <li>Score based on word length.</li>
-                <li>Score decays if you dawdle!</li>
-                <li><strong>Pause</strong> to strategize, <strong>Reset</strong> to reboot.</li>
-                <li><strong>New Grid</strong> for a fresh cosmos.</li>
+                <li>Type a word you find in the grid and click <strong>Submit</strong>.</li>
+                <li>Earn points based on the length of the word.</li>
+                <li>If you take too long to type a word, your score will start to decrease!</li>
+                <li>Use the <strong>Pause</strong> button to take a break, or <strong>Reset</strong> to start a new game.</li>
+                <li>Click <strong>New Grid</strong> to generate a fresh set of letters.</li>
             </ul>
         </p>
-        <p>Ready to conquer the word universe? Blast off!</p>
-        <button class="start-button" onclick="startGame()">Blast Off</button>
+        <p>
+            Ready to test your vocabulary skills and quick thinking? Tap the button below to start!
+        </p>
+        <button class="start-button" onclick="startGame()">Tap to Start</button>
     </div>
 
     <!-- Game Page -->
     <div class="game-page" id="gamePage">
         <h1>Word Grid Quest</h1>
-        <div class="grid-container">
-            <div class="grid" id="grid"></div>
-        </div>
-        <input type="text" id="wordInput" placeholder="Enter a real word" inputmode="text" autocapitalize="off" autocomplete="off">
+        <div class="grid" id="grid"></div>
+        <input type="text" id="wordInput" placeholder="Enter a word" inputmode="text" autocapitalize="off" autocomplete="off">
         <button id="submitButton" onclick="checkWord()">Submit</button>
         <button id="newGridButton" onclick="generateGrid()">New Grid</button>
         <p>Time Left: <span id="timer">02:00</span></p>
         <p>Score: <span id="score">0</span></p>
-        <div>
+        <div class="controls">
             <button id="playPauseButton" onclick="togglePlayPause()">Pause</button>
             <button id="resetButton" onclick="resetGame()">Reset</button>
+        </div>
+        <!-- Donation Message and QR Code -->
+        <div class="donation-message">
+            <p>Are you enjoying the game? Scan or tap and hold the QR code to fuel this adventure with a donation!</p>
+            <img src="donate.jpg" alt="Donate QR Code">
         </div>
     </div>
 
@@ -232,7 +225,7 @@
         const wordInput = document.getElementById('wordInput');
         let score = 0;
         let grid = [];
-        let timeLeft = 120;
+        let timeLeft = 120; // 2 minutes in seconds
         let timerInterval;
         let isPaused = false;
         let foundWords = [];
@@ -289,25 +282,21 @@
                 alert('Already found that one!');
                 return;
             }
-            if (!isValidWord(word.toLowerCase())) {
+            if (!validWords.has(word.toLowerCase())) {
                 alert('Not a valid word!');
                 return;
             }
             const path = findWordPath(word);
             if (path) {
-                score += Math.pow(word.length, 2); // Quadratic scoring for longer words
+                score += word.length;
                 scoreElement.textContent = score;
                 foundWords.push(word);
                 highlightCells(path);
-                alert(`Epic! "${word}" scores ${Math.pow(word.length, 2)}!`);
+                alert(`Epic! "${word}" scores ${word.length}!`);
             } else {
                 alert(`"${word}" not in the grid!`);
             }
             wordInput.value = '';
-        }
-
-        function isValidWord(word) {
-            return validWords.has(word);
         }
 
         function findWordPath(word) {
