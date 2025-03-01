@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Word Grid Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #e0e0e0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .intro-page, .game-page {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .intro-page {
+            flex: 1;
+            text-align: center;
+        }
+        .game-page {
+            display: none;
+            flex: 1;
+            text-align: center;
+            margin: 0 20px 20px;
+            border-radius: 10px;
+        }
+        .intro-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .intro-header img {
+            width: 150px;
+            filter: drop-shadow(0 0 10px #00ffff);
+        }
+        h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        p {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            max-width: 700px;
+            line-height: 1.6;
+            margin: 20px auto;
+        }
+        ul {
+            text-align: left;
+            display: inline-block;
+            margin: 20px auto;
+            padding-left: 20px;
+            color: #00ffcc;
+        }
+        .start-button {
+            padding: 15px 40px;
+            font-size: clamp(1rem, 5vw, 1.3rem);
+            color: #fff;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            animation: glow 1.5s infinite alternate;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 15px #00ffff; }
+            100% { box-shadow: 0 0 25px #ff00ff; }
+        }
+        .grid-container {
+            width: 100%;
+            max-width: min(450px, 90vw);
+            margin: 20px auto;
+            position: relative; /* Lock grid in place */
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            width: 100%;
+            position: sticky; /* Prevent grid scrolling */
+            top: 0;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00ffff;
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            background: #1b263b;
+            color: #fff;
+            aspect-ratio: 1;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .cell:hover {
+            background: #00ffff;
+            color: #000;
+        }
+        .highlight {
+            background: #ff00ff;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+        #wordInput {
+            padding: 12px;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            width: 80%;
+            max-width: 350px;
+            border: 2px solid #00ffff;
+            border-radius: 25px;
+            background: #0d1b2a;
+            color: #fff;
+            outline: none;
+        }
+        #submitButton, #newGridButton, #playPauseButton, #resetButton {
+            padding: 12px 24px;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        #submitButton:hover, #newGridButton:hover, #playPauseButton:hover, #resetButton:hover {
+            transform: scale(1.1);
+        }
+        #submitButton { background: #00ffcc; color: #000; }
+        #newGridButton { background: #ff9800; color: #fff; }
+        #playPauseButton { background: #2196f3; color: #fff; }
+        #resetButton { background: #f44336; color: #fff; }
+        #timer, #score {
+            font-size: clamp(1.5rem, 6vw, 1.8rem);
+            margin: 20px 0;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        footer {
+            background: #0d1b2a;
+            color: #e0e0e0;
+            padding: 15px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Intro Page -->
+    <div class="intro-page" id="introPage">
+        <div class="intro-header">
+            <img src="donate.jpg" alt="Word Grid Quest Logo">
+            <h1>Word Grid Quest</h1>
+        </div>
+        <p>
+            Welcome to <strong>Word Grid Quest</strong>! Dive into a galactic grid of letters, connecting them horizontally, vertically, or diagonally to form real words. Longer words = bigger points! Beat the clock before your score fades into the void.
+        </p>
+        <p>
+            <strong>How to Play:</strong>
+            <ul>
+                <li>Spot a word, type it, hit <strong>Submit</strong>.</li>
+                <li>Score based on word length.</li>
+                <li>Score decays if you dawdle!</li>
+                <li><strong>Pause</strong> to strategize, <strong>Reset</strong> to reboot.</li>
+                <li><strong>New Grid</strong> for a fresh cosmos.</li>
+            </ul>
+        </p>
+        <p>Ready to conquer the word universe? Blast off!</p>
+        <button class="start-button" onclick="startGame()">Blast Off</button>
+    </div>
+
+    <!-- Game Page -->
+    <div class="game-page" id="gamePage">
+        <h1>Word Grid Quest</h1>
+        <div class="grid-container">
+            <div class="grid" id="grid"></div>
+        </div>
+        <input type="text" id="wordInput" placeholder="Enter a real word" inputmode="text" autocapitalize="off" autocomplete="off">
+        <button id="submitButton" onclick="checkWord()">Submit</button>
+        <button id="newGridButton" onclick="generateGrid()">New Grid</button>
+        <p>Time Left: <span id="timer">02:00</span></p>
+        <p>Score: <span id="score">0</span></p>
+        <div>
+            <button id="playPauseButton" onclick="togglePlayPause()">Pause</button>
+            <button id="resetButton" onclick="resetGame()">Reset</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Designed by <strong>Kofi Fosu</strong> | Contact: <a href="mailto:comoscoderr@gmail.com">comoscoderr@gmail.com</a>
+    </footer>
+
+    <script>
+        const gridSize = 10;
+        const gridElement = document.getElementById('grid');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const introPage = document.getElementById('introPage');
+        const gamePage = document.getElementById('gamePage');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const wordInput = document.getElementById('wordInput');
+        let score = 0;
+        let grid = [];
+        let timeLeft = 120;
+        let timerInterval;
+        let isPaused = false;
+        let foundWords = [];
+
+        // Bigger, better dictionary (still a placeholder—API would be ideal)
+        const validWords = new Set([
+            "cat", "dog", "bat", "rat", "hat", "mat", "the", "and", "you", "are",
+            "play", "game", "word", "grid", "quest", "time", "score", "fun", "test",
+            "star", "moon", "mars", "love", "life", "hope", "jump", "cake", "book",
+            "read", "good", "best", "fast", "slow", "blue", "red", "pink", "home",
+            "work", "team", "goal", "kick", "ball", "run", "walk", "talk", "sing",
+            "space", "glow", "dark", "king", "peak", "wave", "fire", "wind", "rain",
+            "snow", "tree", "path", "rock", "ship", "nova", "void", "deep", "high",
+            "cool", "warm", "cold", "heat", "rush", "dash", "boom", "zap", "link"
+        ]);
+
+        function startGame() {
+            introPage.style.display = 'none';
+            gamePage.style.display = 'block';
+            generateGrid();
+            startTimer();
+        }
+
+        function generateGrid() {
+            grid = [];
+            gridElement.innerHTML = '';
+            for (let i = 0; i < gridSize; i++) {
+                let row = [];
+                for (let j = 0; j < gridSize; j++) {
+                    const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                    row.push(letter);
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = letter;
+                    gridElement.appendChild(cell);
+                }
+                grid.push(row);
+            }
+            score = 0;
+            scoreElement.textContent = score;
+            foundWords = [];
+            wordInput.value = '';
+            clearHighlights();
+        }
+
+        function checkWord() {
+            const word = wordInput.value.toUpperCase().trim();
+            if (word.length < 2) {
+                alert('Words must be 2+ letters!');
+                return;
+            }
+            if (foundWords.includes(word)) {
+                alert('Already found that one!');
+                return;
+            }
+            if (!isValidWord(word.toLowerCase())) {
+                alert('Not a valid word!');
+                return;
+            }
+            const path = findWordPath(word);
+            if (path) {
+                score += Math.pow(word.length, 2); // Quadratic scoring for longer words
+                scoreElement.textContent = score;
+                foundWords.push(word);
+                highlightCells(path);
+                alert(`Epic! "${word}" scores ${Math.pow(word.length, 2)}!`);
+            } else {
+                alert(`"${word}" not in the grid!`);
+            }
+            wordInput.value = '';
+        }
+
+        function isValidWord(word) {
+            return validWords.has(word); // Swap with API for galactic coverage
+        }
+
+        function findWordPath(word) {
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],          [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+
+            function search(x, y, index, visited) {
+                if (index === word.length) return visited;
+                if (x < 0 || x >= gridSize || y < 0 || y >= gridSize || 
+                    grid[x][y] !== word[index] || visited.some(([vx, vy]) => vx === x && vy === y)) 
+                    return null;
+
+                visited.push([x, y]);
+                for (const [dx, dy] of directions) {
+                    const result = search(x + dx, y + dy, index + 1, [...visited]);
+                    if (result) return result;
+                }
+                return null;
+            }
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const path = search(i, j, 0, []);
+                    if (path) return path;
+                }
+            }
+            return null;
+        }
+
+        function highlightCells(path) {
+            clearHighlights();
+            for (const [i, j] of path) {
+                const cell = gridElement.children[i * gridSize + j];
+                cell.classList.add('highlight');
+            }
+        }
+
+        function clearHighlights() {
+            const cells = gridElement.children;
+            for (let cell of cells) cell.classList.remove('highlight');
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert(`Game Over! Score: ${score}`);
+                        resetGame();
+                    } else {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                        if (timeLeft % 15 === 0 && score > 0) {
+                            score = Math.max(0, score - 5); // Slower decay
+                            scoreElement.textContent = score;
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        function togglePlayPause() {
+            isPaused = !isPaused;
+            playPauseButton.textContent = isPaused ? 'Play' : 'Pause';
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            timeLeft = 120;
+            timerElement.textContent = '02:00';
+            score = 0;
+            scoreElement.textContent = score;
+            isPaused = false;
+            playPauseButton.textContent = 'Pause';
+            foundWords = [];
+            generateGrid();
+            startTimer();
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
