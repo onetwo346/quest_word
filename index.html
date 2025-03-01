@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen on iOS -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- iOS status bar -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Word Grid Quest</title>
     <style>
         * {
@@ -14,9 +14,9 @@
         }
         html, body {
             height: 100%;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            overscroll-behavior: none; /* Prevent pull-to-refresh issues on mobile */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
         }
         body {
             font-family: 'Orbitron', sans-serif;
@@ -26,17 +26,19 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            touch-action: manipulation; /* Remove 300ms tap delay on mobile */
+            touch-action: manipulation;
         }
-        .intro-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .intro-page, .game-page {
             flex: 1;
-            background: rgba(0, 0, 0, 0.8);
             padding: 20px;
+            overflow-y: auto; /* Scroll entire page */
+            background: rgba(0, 0, 0, 0.8);
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .game-page {
+            display: none;
+            margin: 20px;
+            border-radius: 10px;
         }
         .intro-page img {
             width: 150px;
@@ -44,22 +46,22 @@
             filter: drop-shadow(0 0 10px #00ffff);
             margin-bottom: 20px;
         }
-        .intro-page h1 {
-            font-size: clamp(2rem, 8vw, 3rem); /* Responsive font size */
+        h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
             color: #00ffff;
             text-shadow: 0 0 10px #00ffff;
         }
-        .intro-page p {
+        p {
             font-size: clamp(1rem, 4vw, 1.2rem);
             max-width: 700px;
             line-height: 1.6;
-            color: #e0e0e0;
+            margin: 0 auto;
             padding: 0 10px;
         }
-        .intro-page ul {
+        ul {
             text-align: left;
             display: inline-block;
-            margin: 0 auto 20px;
+            margin: 20px auto;
             padding-left: 20px;
             color: #00ffcc;
         }
@@ -73,21 +75,10 @@
             cursor: pointer;
             animation: glow 1.5s infinite alternate;
             box-shadow: 0 0 15px #00ffff;
-            touch-action: manipulation;
         }
         @keyframes glow {
             0% { box-shadow: 0 0 15px #00ffff; }
             100% { box-shadow: 0 0 25px #ff00ff; }
-        }
-        .game-page {
-            display: none;
-            padding: 20px;
-            flex: 1;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            margin: 20px;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-            overflow-y: auto; /* Enable vertical scroll if needed */
         }
         .grid {
             display: grid;
@@ -95,7 +86,7 @@
             gap: 4px;
             margin: 20px auto;
             width: 100%;
-            max-width: min(450px, 90vw); /* Responsive grid size */
+            max-width: min(450px, 90vw);
         }
         .cell {
             display: flex;
@@ -107,11 +98,10 @@
             color: #fff;
             aspect-ratio: 1;
             transition: all 0.3s ease;
-            user-select: none; /* Prevent text selection */
-            -webkit-user-select: none; /* iOS Safari */
-            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .cell:hover, .cell.touched {
+        .cell:hover {
             background: #00ffff;
             color: #000;
         }
@@ -130,7 +120,7 @@
             border-radius: 25px;
             background: #0d1b2a;
             color: #fff;
-            outline: none; /* Remove iOS Safari outline */
+            outline: none;
         }
         #submitButton, #newGridButton, #playPauseButton, #resetButton {
             padding: 12px 24px;
@@ -140,27 +130,14 @@
             cursor: pointer;
             margin: 5px;
             transition: transform 0.2s;
-            touch-action: manipulation;
         }
         #submitButton:hover, #newGridButton:hover, #playPauseButton:hover, #resetButton:hover {
             transform: scale(1.1);
         }
-        #submitButton {
-            background: #00ffcc;
-            color: #000;
-        }
-        #newGridButton {
-            background: #ff9800;
-            color: #fff;
-        }
-        #playPauseButton {
-            background: #2196f3;
-            color: #fff;
-        }
-        #resetButton {
-            background: #f44336;
-            color: #fff;
-        }
+        #submitButton { background: #00ffcc; color: #000; }
+        #newGridButton { background: #ff9800; color: #fff; }
+        #playPauseButton { background: #2196f3; color: #fff; }
+        #resetButton { background: #f44336; color: #fff; }
         #timer, #score {
             font-size: clamp(1.5rem, 6vw, 1.8rem);
             margin-top: 20px;
@@ -179,7 +156,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            flex-wrap: wrap; /* Wrap on small screens */
+            flex-wrap: wrap;
         }
         footer a {
             color: #00ffcc;
@@ -202,19 +179,19 @@
         <img src="word.jpg" alt="Word Grid Quest Logo">
         <h1>Word Grid Quest</h1>
         <p>
-            Welcome to <strong>Word Grid Quest</strong>! Dive into a cosmic grid of letters and uncover real words by connecting adjacent letters—horizontally, vertically, or diagonally. The longer the word, the higher your score! Time is your enemy—your score decays if you’re too slow. Only valid English words count!
+            Welcome to <strong>Word Grid Quest</strong>! Explore a cosmic grid of letters and uncover real words by connecting adjacent letters—horizontally, vertically, or diagonally. Longer words = higher scores! Time’s ticking—don’t let your score decay. Only valid English words count!
         </p>
         <p>
             <strong>How to Play:</strong>
             <ul>
                 <li>Type a real word you spot and hit <strong>Submit</strong>.</li>
                 <li>Score points based on word length.</li>
-                <li>Watch your score shrink if you dawdle!</li>
-                <li><strong>Pause</strong> to strategize, or <strong>Reset</strong> to restart.</li>
-                <li>Get a fresh grid with <strong>New Grid</strong>.</li>
+                <li>Score shrinks if you’re slow!</li>
+                <li><strong>Pause</strong> to think, <strong>Reset</strong> to restart.</li>
+                <li><strong>New Grid</strong> for a fresh challenge.</li>
             </ul>
         </p>
-        <p>Ready to conquer the galaxy of words? Hit the button!</p>
+        <p>Ready to dominate the word galaxy? Launch now!</p>
         <button class="start-button" onclick="startGame()">Launch Quest</button>
     </div>
 
@@ -233,7 +210,7 @@
         </div>
     </div>
 
-    <!-- Footer with QR Code -->
+    <!-- Footer (Game Page Only) -->
     <footer>
         Designed by <strong>Kofi Fosu</strong> | Contact: <a href="mailto:comoscoderr@gmail.com">comoscoderr@gmail.com</a>
         <img src="donate.jpg" alt="Support via QR Code">
@@ -254,12 +231,15 @@
         let timerInterval;
         let isPaused = false;
         let foundWords = [];
-        let selectedCells = []; // For touch selection
 
-        // Simple dictionary (expand or replace with API)
+        // Expanded dictionary (simulating AI detection - replace with API for full coverage)
         const validWords = new Set([
             "cat", "dog", "bat", "rat", "hat", "mat", "the", "and", "you", "are",
-            "play", "game", "word", "grid", "quest", "time", "score", "fun", "test"
+            "play", "game", "word", "grid", "quest", "time", "score", "fun", "test",
+            "star", "moon", "mars", "love", "life", "hope", "jump", "cake", "book",
+            "read", "good", "best", "fast", "slow", "blue", "red", "pink", "home",
+            "work", "team", "goal", "kick", "ball", "run", "walk", "talk", "sing"
+            // Add more or use an API like Free Dictionary API
         ]);
 
         function startGame() {
@@ -267,13 +247,11 @@
             gamePage.style.display = 'block';
             generateGrid();
             startTimer();
-            addTouchListeners();
         }
 
         function generateGrid() {
             grid = [];
             gridElement.innerHTML = '';
-            selectedCells = [];
             for (let i = 0; i < gridSize; i++) {
                 let row = [];
                 for (let j = 0; j < gridSize; j++) {
@@ -282,8 +260,6 @@
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.textContent = letter;
-                    cell.dataset.row = i;
-                    cell.dataset.col = j;
                     gridElement.appendChild(cell);
                 }
                 grid.push(row);
@@ -292,58 +268,7 @@
             scoreElement.textContent = score;
             foundWords = [];
             wordInput.value = '';
-        }
-
-        function addTouchListeners() {
-            const cells = gridElement.children;
-            for (let cell of cells) {
-                cell.addEventListener('touchstart', handleTouchStart, { passive: false });
-                cell.addEventListener('touchmove', handleTouchMove, { passive: false });
-                cell.addEventListener('touchend', handleTouchEnd, { passive: false });
-            }
-        }
-
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const cell = e.target;
-            selectedCells = [[parseInt(cell.dataset.row), parseInt(cell.dataset.col)]];
-            cell.classList.add('touched');
-            updateWordInput();
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const element = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (element && element.classList.contains('cell')) {
-                const row = parseInt(element.dataset.row);
-                const col = parseInt(element.dataset.col);
-                const lastCell = selectedCells[selectedCells.length - 1];
-                if (isAdjacent(lastCell, [row, col]) && !selectedCells.some(c => c[0] === row && c[1] === col)) {
-                    selectedCells.push([row, col]);
-                    element.classList.add('touched');
-                    updateWordInput();
-                }
-            }
-        }
-
-        function handleTouchEnd(e) {
-            e.preventDefault();
-            const cells = gridElement.children;
-            for (let cell of cells) {
-                cell.classList.remove('touched');
-            }
-            checkWord();
-        }
-
-        function isAdjacent([r1, c1], [r2, c2]) {
-            const dr = Math.abs(r1 - r2);
-            const dc = Math.abs(c1 - c2);
-            return dr <= 1 && dc <= 1 && !(dr === 0 && dc === 0);
-        }
-
-        function updateWordInput() {
-            wordInput.value = selectedCells.map(([r, c]) => grid[r][c]).join('');
+            clearHighlights();
         }
 
         function checkWord() {
@@ -366,17 +291,15 @@
                 scoreElement.textContent = score;
                 foundWords.push(word);
                 highlightCells(path);
-                alert(`Great job! "${word}" found!`);
+                alert(`Awesome! "${word}" found! +${word.length} points`);
             } else {
                 alert(`"${word}" isn’t in the grid!`);
             }
             wordInput.value = '';
-            selectedCells = [];
-            clearTouched();
         }
 
         function isValidWord(word) {
-            return validWords.has(word);
+            return validWords.has(word); // Expand this with an API for full AI-like detection
         }
 
         function isWordInGrid(word) {
@@ -415,24 +338,22 @@
         }
 
         function highlightCells(path) {
-            const cells = gridElement.children;
-            for (let i = 0; i < cells.length; i++) {
-                cells[i].classList.remove('highlight');
-            }
+            clearHighlights();
             for (const [i, j] of path) {
-                const cell = cells[i * gridSize + j];
+                const cell = gridElement.children[i * gridSize + j];
                 cell.classList.add('highlight');
             }
         }
 
-        function clearTouched() {
+        function clearHighlights() {
             const cells = gridElement.children;
             for (let cell of cells) {
-                cell.classList.remove('touched');
+                cell.classList.remove('highlight');
             }
         }
 
         function startTimer() {
+            clearInterval(timerInterval); // Ensure no duplicate timers
             timerInterval = setInterval(() => {
                 if (!isPaused) {
                     timeLeft--;
@@ -444,8 +365,10 @@
                         const minutes = Math.floor(timeLeft / 60);
                         const seconds = timeLeft % 60;
                         timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                        if (timeLeft % 10 === 0 && score > 0) score--;
-                        scoreElement.textContent = score;
+                        if (timeLeft % 10 === 0 && score > 0) {
+                            score--;
+                            scoreElement.textContent = score;
+                        }
                     }
                 }
             }, 1000);
@@ -469,7 +392,7 @@
             startTimer();
         }
 
-        // Prevent iOS Safari from zooming on double-tap
+        // Prevent iOS zoom on double-tap
         document.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
