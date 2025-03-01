@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Grid Quest</title>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif; /* Futuristic font */
+            text-align: center;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b); /* Dark space vibe */
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .intro-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .intro-page img {
+            width: 150px;
+            filter: drop-shadow(0 0 10px #00ffff);
+            margin-bottom: 20px;
+        }
+        .intro-page h1 {
+            font-size: 3rem;
+            color: #00ffff; /* Neon cyan */
+            text-shadow: 0 0 10px #00ffff;
+        }
+        .intro-page p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        .intro-page ul {
+            text-align: left;
+            display: inline-block;
+            margin: 0 auto 20px;
+            padding-left: 20px;
+            color: #00ffcc;
+        }
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            color: #fff;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            animation: glow 1.5s infinite alternate;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 15px #00ffff; }
+            100% { box-shadow: 0 0 25px #ff00ff; }
+        }
+        .game-page {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            margin: 20px auto;
+            max-width: 450px;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00ffff;
+            font-size: 1.3rem;
+            background: #1b263b;
+            color: #fff;
+            aspect-ratio: 1;
+            transition: all 0.3s ease;
+        }
+        .cell:hover {
+            background: #00ffff;
+            color: #000;
+        }
+        .highlight {
+            background: #ff00ff; /* Neon magenta for found words */
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+        #wordInput {
+            padding: 12px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 350px;
+            border: 2px solid #00ffff;
+            border-radius: 25px;
+            background: #0d1b2a;
+            color: #fff;
+        }
+        #submitButton, #newGridButton, #playPauseButton, #resetButton {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        #submitButton:hover, #newGridButton:hover, #playPauseButton:hover, #resetButton:hover {
+            transform: scale(1.1);
+        }
+        #submitButton {
+            background: #00ffcc;
+            color: #000;
+        }
+        #newGridButton {
+            background: #ff9800;
+            color: #fff;
+        }
+        #playPauseButton {
+            background: #2196f3;
+            color: #fff;
+        }
+        #resetButton {
+            background: #f44336;
+            color: #fff;
+        }
+        #timer, #score {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        footer {
+            background: #0d1b2a;
+            color: #e0e0e0;
+            padding: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        footer img {
+            width: 100px; /* Adjust QR code size */
+            filter: drop-shadow(0 0 5px #00ffff);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Intro Page -->
+    <div class="intro-page" id="introPage">
+        <img src="word.jpg" alt="Word Grid Quest Logo">
+        <h1>Word Grid Quest</h1>
+        <p>
+            Welcome to <strong>Word Grid Quest</strong>! Dive into a cosmic grid of letters and uncover real words by connecting adjacent letters—horizontally, vertically, or diagonally. The longer the word, the higher your score! Time is your enemy—your score decays if you’re too slow. Only valid English words count, so no random gibberish!
+        </p>
+        <p>
+            <strong>How to Play:</strong>
+            <ul>
+                <li>Type a real word you spot and hit <strong>Submit</strong>.</li>
+                <li>Score points based on word length.</li>
+                <li>Watch your score shrink if you dawdle!</li>
+                <li><strong>Pause</strong> to strategize, or <strong>Reset</strong> to restart.</li>
+                <li>Get a fresh grid with <strong>New Grid</strong>.</li>
+            </ul>
+        </p>
+        <p>Ready to conquer the galaxy of words? Hit the button!</p>
+        <button class="start-button" onclick="startGame()">Launch Quest</button>
+    </div>
+
+    <!-- Game Page -->
+    <div class="game-page" id="gamePage">
+        <h1>Word Grid Quest</h1>
+        <div class="grid" id="grid"></div>
+        <input type="text" id="wordInput" placeholder="Enter a real word" inputmode="text">
+        <button id="submitButton" onclick="checkWord()">Submit</button>
+        <button id="newGridButton" onclick="generateGrid()">New Grid</button>
+        <p>Time Left: <span id="timer">02:00</span></p>
+        <p>Score: <span id="score">0</span></p>
+        <div class="controls">
+            <button id="playPauseButton" onclick="togglePlayPause()">Pause</button>
+            <button id="resetButton" onclick="resetGame()">Reset</button>
+        </div>
+    </div>
+
+    <!-- Footer with QR Code -->
+    <footer>
+        Designed by <strong>Kofi Fosu</strong> | Contact: <a href="mailto:comoscoderr@gmail.com">comoscoderr@gmail.com</a>
+        <img src="donate.jpg" alt="Support via QR Code">
+    </footer>
+
+    <script>
+        const gridSize = 10;
+        const gridElement = document.getElementById('grid');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const introPage = document.getElementById('introPage');
+        const gamePage = document.getElementById('gamePage');
+        const playPauseButton = document.getElementById('playPauseButton');
+        let score = 0;
+        let grid = [];
+        let timeLeft = 120;
+        let timerInterval;
+        let isPaused = false;
+        let foundWords = [];
+
+        // Simple dictionary for word validation (expandable or replace with API call)
+        const validWords = new Set([
+            "cat", "dog", "bat", "rat", "hat", "mat", "the", "and", "you", "are",
+            "play", "game", "word", "grid", "quest", "time", "score", "fun", "test",
+            // Add more words or use an external dictionary API
+        ]);
+
+        function startGame() {
+            introPage.style.display = 'none';
+            gamePage.style.display = 'block';
+            generateGrid();
+            startTimer();
+        }
+
+        function generateGrid() {
+            grid = [];
+            gridElement.innerHTML = '';
+            for (let i = 0; i < gridSize; i++) {
+                let row = [];
+                for (let j = 0; j < gridSize; j++) {
+                    const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                    row.push(letter);
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = letter;
+                    gridElement.appendChild(cell);
+                }
+                grid.push(row);
+            }
+            score = 0;
+            scoreElement.textContent = score;
+            foundWords = [];
+            document.getElementById('wordInput').value = '';
+        }
+
+        function checkWord() {
+            const word = document.getElementById('wordInput').value.toUpperCase().trim();
+            if (word.length < 2) {
+                alert('Words must be at least 2 letters long!');
+                return;
+            }
+            if (foundWords.includes(word)) {
+                alert('You already found this word!');
+                return;
+            }
+            // Step 1: Check if it's a valid English word
+            if (!isValidWord(word.toLowerCase())) {
+                alert('Not a valid English word!');
+                return;
+            }
+            // Step 2: Check if it exists in the grid
+            const path = isWordInGrid(word);
+            if (path) {
+                score += word.length;
+                scoreElement.textContent = score;
+                foundWords.push(word);
+                highlightCells(path);
+                alert(`Great job! "${word}" found!`);
+            } else {
+                alert(`"${word}" isn’t in the grid!`);
+            }
+            document.getElementById('wordInput').value = '';
+        }
+
+        function isValidWord(word) {
+            // Replace this with an API call to a dictionary service if desired (e.g., WordsAPI)
+            return validWords.has(word);
+        }
+
+        function isWordInGrid(word) {
+            const rows = grid.length;
+            const cols = grid[0].length;
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],          [0, 1],
+                [1, -1],  [1, 0], [1, 1]
+            ];
+
+            function dfs(i, j, index, path) {
+                if (index === word.length) return path;
+                if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] !== word[index]) return null;
+
+                const temp = grid[i][j];
+                grid[i][j] = '#';
+                for (const [dx, dy] of directions) {
+                    const result = dfs(i + dx, j + dy, index + 1, [...path, [i, j]]);
+                    if (result) {
+                        grid[i][j] = temp;
+                        return result;
+                    }
+                }
+                grid[i][j] = temp;
+                return null;
+            }
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const path = dfs(i, j, 0, []);
+                    if (path) return path;
+                }
+            }
+            return null;
+        }
+
+        function highlightCells(path) {
+            const cells = gridElement.children;
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('highlight'); // Clear previous highlights
+            }
+            for (const [i, j] of path) {
+                const cell = cells[i * gridSize + j];
+                cell.classList.add('highlight');
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert(`Time’s up! Final Score: ${score}`);
+                        resetGame();
+                    } else {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                        if (timeLeft % 10 === 0 && score > 0) score--; // Score decay every 10 seconds
+                        scoreElement.textContent = score;
+                    }
+                }
+            }, 1000);
+        }
+
+        function togglePlayPause() {
+            isPaused = !isPaused;
+            playPauseButton.textContent = isPaused ? 'Play' : 'Pause';
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            timeLeft = 120;
+            timerElement.textContent = '02:00';
+            score = 0;
+            scoreElement.textContent = score;
+            isPaused = false;
+            playPauseButton.textContent = 'Pause';
+            foundWords = [];
+            generateGrid();
+            startTimer();
+        }
+    </script>
+</body>
+</html>
